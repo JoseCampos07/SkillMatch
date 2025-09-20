@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SkillMatch - Conectamos Talento Digital</title>
+
+  <style>
+    :root{
+      --pine-tree: #2C341B;
+      --morning-blue: #94A59C;
+      --bone: #DDDFC2;
+      --olivine: #97AC82;
+      --russian-green: #688A65;
+      --bg-gradient: linear-gradient(135deg,var(--russian-green) 0%, var(--olivine) 45%, var(--pine-tree) 100%);
+      --card-bg: white;
+      --muted: #6b6b6b;
+      --radius: 12px;
+      --shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family: Arial, sans-serif;
+      background: var(--bg-gradient);
+      color: #222;
+      line-height:1.45;
+      padding:20px;
+    }
+
+    header{
+      position:sticky; top:16px;
+      max-width:1200px; margin:0 auto 20px;
+      background: rgba(255,255,255,0.92);
+      padding:14px 18px; border-radius:18px;
+      box-shadow: var(--shadow);
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo-img{width:46px;height:46px;border-radius:10px;object-fit:cover}
+    .brand h1{font-size:1.15rem;color:var(--pine-tree);letter-spacing:0.6px}
+    .nav-actions{display:flex;gap:10px;align-items:center}
+    .btn{padding:10px 14px;border-radius:30px;border:none;cursor:pointer;font-weight:600}
+    .btn-primary{background:linear-gradient(45deg,var(--russian-green),var(--pine-tree)); color:white}
+    .btn-outline{background:transparent;border:2px solid rgba(44,52,27,0.12); color:var(--pine-tree)}
+    .wrap{max-width:1200px;margin:0 auto}
+    .page{display:none; min-height:70vh}
+    .page.active{display:block}
+    .card{background:var(--card-bg); border-radius:var(--radius); padding:22px; box-shadow: var(--shadow); max-width:720px; margin:30px auto;}
+    .form{display:flex;flex-direction:column;gap:12px}
+    input,textarea{padding:10px 12px;border-radius:8px;border:1px solid #e8e8e8;font-size:0.95rem;width:100%}
+    textarea{min-height:100px;resize:vertical}
+    .profiles-wrap{margin-top:18px;height:420px;overflow:auto;padding-right:8px}
+    .profile-item{display:flex;gap:12px;padding:12px;border-radius:12px;margin-bottom:10px;background:rgba(151,172,130,0.1);cursor:pointer;align-items:center}
+    .avatar{width:64px;height:64px;border-radius:10px;background:linear-gradient(135deg,var(--russian-green),var(--olivine));display:flex;align-items:center;justify-content:center;color:var(--bone);font-weight:800;font-size:1.1rem}
+    .badge{display:inline-block;background:rgba(151,172,130,0.15);padding:4px 8px;border-radius:999px;color:var(--pine-tree);font-weight:600;font-size:0.85rem}
+    .muted{color:var(--muted);font-size:0.95rem}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <!-- logo.png debe estar en la carpeta assets -->
+      <img src="assets/logo.png" alt="SkillMatch Logo" class="logo-img">
+      <div>
+        <h1>SkillMatch</h1>
+        <div class="muted">Conectamos talento digital</div>
+      </div>
+    </div>
+
+    <div class="nav-actions">
+      <button class="btn btn-outline" id="btn-mode">Modo: <span id="mode-label">Cliente</span></button>
+      <button class="btn btn-outline" id="btn-myprofile">Mi perfil</button>
+      <button class="btn btn-primary" id="btn-logout">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- LOGIN -->
+    <section id="login" class="page active">
+      <div class="card">
+        <h2>Iniciar Sesión</h2>
+        <form id="auth-form" class="form" onsubmit="return handleAuth(event)">
+          <input type="email" id="email" placeholder="Correo" required>
+          <input type="password" id="password" placeholder="Contraseña" required>
+          <button type="submit" class="btn btn-primary">Entrar</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="page">
+      <div class="card">
+        <h2>Panel Principal</h2>
+        <button class="btn btn-primary" onclick="showPage('profiles')">Ver Perfiles</button>
+      </div>
+    </section>
+
+    <!-- PROFILES -->
+    <section id="profiles" class="page">
+      <div class="card">
+        <h2>Freelancers</h2>
+        <div class="profiles-wrap" id="profiles-list"></div>
+      </div>
+    </section>
+
+    <!-- PROFILE -->
+    <section id="profile" class="page">
+      <div class="card">
+        <h2 id="profile-name">Perfil</h2>
+        <p id="profile-bio"></p>
+        <button class="btn btn-primary" onclick="showPage('proposal')">Enviar Propuesta</button>
+      </div>
+    </section>
+
+    <!-- PROPOSAL -->
+    <section id="proposal" class="page">
+      <div class="card">
+        <h2>Enviar Propuesta</h2>
+        <input id="prop-title" type="text" placeholder="Título del proyecto">
+        <input id="prop-budget" type="number" placeholder="Presupuesto (MXN)">
+        <input id="wallet-addr" type="text" placeholder="$wallet.example.com/usuario">
+        <button class="btn btn-primary" onclick="submitProposal()">Enviar</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const state = {
+      logged:false,
+      profiles:[
+        {id:"ana", name:"Ana García", bio:"Frontend developer con 5 años de experiencia."},
+        {id:"carlos", name:"Carlos López", bio:"Diseñador UX/UI con enfoque en usabilidad."}
+      ],
+      viewingProfile:null
+    };
+
+    function showPage(id){
+      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function handleAuth(e){
+      e.preventDefault();
+      state.logged=true;
+      showPage('dashboard');
+      return false;
+    }
+
+    function renderProfiles(){
+      const wrap=document.getElementById('profiles-list');
+      wrap.innerHTML='';
+      state.profiles.forEach(p=>{
+        const div=document.createElement('div');
+        div.className='profile-item';
+        div.innerHTML=`<div class="avatar">${p.name[0]}</div><div><h3>${p.name}</h3><p class="muted">${p.bio}</p></div>`;
+        div.onclick=()=>openProfile(p);
+        wrap.appendChild(div);
+      });
+    }
+
+    function openProfile(p){
+      state.viewingProfile=p;
+      document.getElementById('profile-name').textContent=p.name;
+      document.getElementById('profile-bio').textContent=p.bio;
+      showPage('profile');
+    }
+
+    function submitProposal(){
+      const title=document.getElementById('prop-title').value.trim();
+      const budget=document.getElementById('prop-budget').value.trim();
+      const wallet=document.getElementById('wallet-addr').value.trim();
+      if(!title||!budget||!wallet){alert("Completa todos los campos, incluyendo tu Payment Pointer.");return;}
+      const paymentUrl=`https://wallet.interledger-test.dev/.well-known/pay?receiver=${encodeURIComponent(wallet)}`;
+      window.open(paymentUrl,"_blank");
+      alert("Se abrirá la Interledger Test Wallet para procesar el pago.");
+      showPage('dashboard');
+    }
+
+    document.addEventListener('DOMContentLoaded', renderProfiles);
+  </script>
+</body>
+</html>
