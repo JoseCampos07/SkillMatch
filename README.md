@@ -1,5 +1,5 @@
 SkillMatch
-<p align="center"> <img src="URL_DEL_LOGO_SKILLMATCH_AQUI" width="400" alt="SkillMatch Logo"> </p>
+<p align="center"> <img src="logo.png" width="400" alt="SkillMatch Logo"> </p>
 
 Project Overview
 
