@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillMatch - Conectamos Talento Digital</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #688A65 0%, #97AC82 50%, #2C341B 100%);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2C341B;
+        }
+
+        .logo img {
+            height: 40px;
+            width: 40px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            background: linear-gradient(45deg, #2C341B, #688A65);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #688A65, #2C341B);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #2C341B;
+            border: 2px solid #688A65;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Páginas */
+        .page {
+            display: none;
+            min-height: calc(100vh - 80px);
+            padding: 2rem;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Login Page */
+        .login-container {
+            max-width: 500px;
+            margin: 4rem auto;
+            text-align: center;
+        }
+
+        .user-type-selector {
+            display: flex;
+            margin: 2rem 0;
+            border-radius: 50px;
+            overflow: hidden;
+            border: 2px solid #e0e0e0;
+        }
+
+        .user-type {
+            flex: 1;
+            padding: 1rem;
+            background: #f5f5f5;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-type.active {
+            background: #688A65;
+            color: white;
+        }
+
+        .form-group {
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #688A65;
+        }
+
+        /* Dashboard */
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .search-section {
+            background: linear-gradient(135deg, #688A65, #2C341B);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            color: white;
+            text-align: center;
+        }
+
+        .search-box {
+            display: flex;
+            max-width: 600px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 50px;
+            padding: 0.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 50px;
+            outline: none;
+        }
+
+        .search-box button {
+            background: linear-gradient(45deg, #688A65, #2C341B);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .action-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .action-card .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Profiles List */
+        .profiles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .profile-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #688A65, #97AC82);
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .profile-info h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-info .badge {
+            background: rgba(151, 172, 130, 0.2);
+            color: #2C341B;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .skills {
+            margin: 1rem 0;
+        }
+
+        .skill-tag {
+            display: inline-block;
+            background: #f0f0f0;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin: 0.2rem;
+            color: #666;
+        }
+
+        /* Profile Detail */
+        .profile-detail {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .profile-banner {
+            background: linear-gradient(135deg, #688A65, #2C341B);
+            border-radius: 20px;
+            padding: 3rem;
+            color: white;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-banner .avatar-large {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .portfolio-item {
+            background: rgba(151, 172, 130, 0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        /* Proposal Form */
+        .proposal-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-section {
+            margin: 2rem 0;
+        }
+
+        .form-section h3 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #688A65;
+        }
+
+        /* Payment */
+        .payment-container {
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .payment-amount {
+            font-size: 2rem;
+            color: #2C341B;
+            margin: 2rem 0;
+            font-weight: bold;
+        }
+
+        .wallet-connection {
+            background: rgba(221, 223, 194, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .search-box {
+                flex-direction: column;
+                max-width: 90%;
+            }
+
+            .profiles-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAACXBIWXMAAAsTAAALEwEAmpwYAAAKT2lDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjanVNnVFPpFj333vRCS4iAlEtvUhUIIFJCi4AUkSYqIQkQSoghodkVUcERRUUEG8igiAOOjoCMFVEsDIoK2AfkIaKOg6OIisr74Xuja9a89+bN/rXXPues852zzwfACAyWSDNRNYAMqUIeEeCDx8TG4eQuQIEKJHAAEAizZCFz/SMBAPh+PDwrIsAHvgABeNMLCADATZvAMByH/w/qQplcAYCEAcB0kThLCIAUAEB6jkKmAEBGAYCdmCZTAKAEAGDLY2LjAFAtAGAnf+bTAICd+Jl7AQBblCEVAaCRACATZYhEAGg7AKzPVopFAFgwABRmS8Q5ANgtADBJV2ZIALC3AMDOEAuyAAgMADBRiIUpAAR7AGDIIyN4AISZABRG8lc88SuuEOcqAAB4mbI8uSQ5RYFbCC1xB1dXLh4ozkkXKxQ2YQJhmkAuwnmZGTKBNA/g88wAAKCRFRHgg/P9eM4Ors7ONo62Dl8t6r8G/yJiYuP+5c+rcEAAAOF0ftH+LC+zGoA7BoBt/qIl7gRoXgugdfeLZrIPQLUAoOnaV/Nw+H48PEWhkLnZ2eXk5NhKxEJbYcpXff5nwl/AV/1s+X48/Pf14L7iJIEyXYFHBPjgwsz0TKUcz5IJhGLc5o9H/LcL//wd0yLESWK5WCoU41EScY5EmozzMqUiiUKSKcUl0v9k4t8s+wM+3zUAsGo+AXuRLahdYwP2SycQWHTA4vcAAPK7b8HUKAgDgGiD4c93/+8//UegJQCAZkmScQAAXkQkLlTKsz/HCAAARKCBKrBBG/TBGCzABhzBBdzBC/xgNoRCJMTCQhBCCmSAHHJgKayCQiiGzbAdKmAv1EAdNMBRaIaTcA4uwlW4Dj1wD/phCJ7BKLyBCQRByAgTYSHaiAFiilgjjggXmYX4IcFIBBKLJCDJiBRRIkuRNUgxUopUIFVIHfI9cgI5h1xGupE7yAAygvyGvEcxlIGyUT3UDLVDuag3GoRGogvQZHQxmo8WoJvQcrQaPYw2oefQq2gP2o8+Q8cwwOgYBzPEbDAuxsNCsTgsCZNjy7EirAyrxhqwVqwDu4n1Y8+xdwQSgUXACTYEd0IgYR5BSFhMWE7YSKggHCQ0EdoJNwkDhFHCJyKTqEu0JroR+cQYYjIxh1hILCPWEo8TLxB7iEPENyQSiUMyJ7mQAkmxpFTSEtJG0m5SI+ksqZs0SBojk8naZGuyBzmULCAryIXkneTD5DPkG+Qh8lsKnWJAcaT4U+IoUspqShnlEOU05QZlmDJBVaOaUt2ooVQRNY9aQq2htlKvUYeoEzR1mjnNgxZJS6WtopXTGmgXaPdpr+h0uhHdlR5Ol9BX0svpR+iX6AP0dwwNhhWDx4hnKBmbGAcYZxl3GK+YTKYZ04sZx1QwNzHrmOeZD5lvVVgqtip8FZHKCpVKlSaVGyovVKmqpqreqgtV81XLVI+pXlN9rkZVM1PjqQnUlqtVqp1Q61MbU2epO6iHqmeob1Q/pH5Z/YkGWcNMw09DpFGgsV/jvMYgC2MZs3gsIWsNq4Z1gTXEJrHN2Xx2KruY/R27iz2qqaE5QzNKM1ezUvOUZj8H45hx+Jx0TgnnKKeX836K3hTvKeIpG6Y0TLkxZVxrqpaXllirSKtRq0frvTau7aedpr1Fu1n7gQ5Bx0onXCdHZ4/OBZ3nU9lT3acKpxZNPTr1ri6qa6UbobtEd79up+6Ynr5egJ5Mb6feeb3n+hx9L/1U/W36p/VHDFgGswwkBtsMzhg8xTVxbzwdL8fb8VFDXcNAQ6VhlWGX4SU" alt="SkillMatch Logo">
+                <span class="logo-text">SkillMatch</span>
+            </div>
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" onclick="showPage('my-profile')">Mi Perfil</button>
+                <button class="btn btn-secondary" onclick="toggleUserType()">Cambiar Modo</button>
+                <button class="btn btn-primary" onclick="logout()">Cerrar Sesión</button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Login Page -->
+    <div id="login-page" class="page active">
+        <div class="login-container container fade-in">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <img src="data:image/png;base64,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" alt="SkillMatch" style="width: 120px; height: 120px; margin-bottom: 1rem;">
+            </div>
+            <h1>Bienvenido a SkillMatch</h1>
+            <p>Conectamos talento digital con oportunidades</p>
+            
+            <div class="user-type-selector">
+                <button class="user-type active" onclick="selectUserType('freelancer')">
+                    Soy Freelancer
+                </button>
+                <button class="user-type" onclick="selectUserType('client')">
+                    Busco Servicios
+                </button>
+            </div>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="email">Correo Electrónico</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                    Iniciar Sesión
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard-page" class="page">
+        <div class="container fade-in">
+            <div class="dashboard-header">
+                <h1>Panel Principal</h1>
+                <p>Encuentra el talento perfecto para tu proyecto</p>
+            </div>
+
+            <div class="search-section">
+                <h2>Buscar Freelancers</h2>
+                <div class="search-box">
+                    <input type="text" placeholder="Buscar por habilidades, nombre o categoría...">
+                    <button onclick="searchProfiles()">Buscar</button>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <div class="action-card" onclick="showPage('profiles')">
+                    <div class="icon">👥</div>
+                    <h3>Ver Todos los Perfiles</h3>
+                    <p>Explora nuestra base de freelancers</p>
+                </div>
+                <div class="action-card" onclick="showPage('my-profile')">
+                    <div class="icon">⚙️</div>
+                    <h3>Mi Perfil</h3>
+                    <p>Configura tu información</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profiles List -->
+    <div id="profiles-page" class="page">
+        <div class="container fade-in">
+            <h2>Freelancers Disponibles</h2>
+            
+            <div class="profiles-grid">
+                <!-- Profile Card 1 -->
+                <div class="profile-card" onclick="showProfileDetail('ana-garcia')">
+                    <div class="profile-header">
+                        <div class="profile-avatar">AG</div>
+                        <div class="profile-info">
+                            <h3>Ana García</h3>
+                            <span class="badge">Desarrolladora Frontend</span>
+                        </div>
+                    </div>
+                    <div class="skills">
+                        <span class="skill-tag">React</span>
+                        <span class="skill-tag">JavaScript</span>
+                        <span class="skill-tag">CSS</span>
+                    </div>
+                    <p>Especialista en interfaces web modernas y responsivas</p>
+                </div>
+
+                <!-- Profile Card 2 -->
+                <div class="profile-card" onclick="showProfileDetail('carlos-lopez')">
+                    <div class="profile-header">
+                        <div class="profile-avatar">CL</div>
+                        <div class="profile-info">
+                            <h3>Carlos López</h3>
+                            <span class="badge">Diseñador UX/UI</span>
+                        </div>
+                    </div>
+                    <div class="skills">
+                        <span class="skill-tag">Figma</span>
+                        <span class="skill-tag">Adobe XD</span>
+                        <span class="skill-tag">Photoshop</span>
+                    </div>
+                    <p>Creador de experiencias digitales excepcionales</p>
+                </div>
+
+                <!-- Profile Card 3 -->
+                <div class="profile-card" onclick="showProfileDetail('maria-rodriguez')">
+                    <div class="profile-header">
+                        <div class="profile-avatar">MR</div>
+                        <div class="profile-info">
+                            <h3>María Rodríguez</h3>
+                            <span class="badge">Desarrolladora Backend</span>
+                        </div>
+                    </div>
+                    <div class="skills">
+                        <span class="skill-tag">PHP</span>
+                        <span class="skill-tag">MySQL</span>
+                        <span class="skill-tag">Laravel</span>
+                    </div>
+                    <p>Experta en desarrollo de APIs y sistemas robustos</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Detail -->
+    <div id="profile-detail-page" class="page">
+        <div class="container fade-in">
+            <div class="profile-detail">
+                <div class="profile-banner">
+                    <div class="avatar-large">AG</div>
+                    <h1>Ana García</h1>
+                    <p>Desarrolladora Frontend Senior</p>
+                    <div class="badge" style="background: rgba(255,255,255,0.2); color: white;">
+                        Cédula Profesional: 12345678
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Sobre Mí</h3>
+                    <p>Desarrolladora frontend con más de 5 años de experiencia creando aplicaciones web modernas y responsivas. Especializada en React, Vue.js y tecnologías frontend emergentes.</p>
+                </div>
+
+                <div class="form-section">
+                    <h3>Habilidades</h3>
+                    <div class="skills">
+                        <span class="skill-tag">React</span>
+                        <span class="skill-tag">Vue.js</span>
+                        <span class="skill-tag">JavaScript</span>
+                        <span class="skill-tag">TypeScript</span>
+                        <span class="skill-tag">CSS3</span>
+                        <span class="skill-tag">Sass</span>
+                        <span class="skill-tag">Tailwind</span>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Portafolio</h3>
+                    <div class="portfolio-grid">
+                        <div class="portfolio-item">
+                            <h4>E-commerce React</h4>
+                            <p>Tienda online completa con carrito de compras</p>
+                        </div>
+                        <div class="portfolio-item">
+                            <h4>Dashboard Administrativo</h4>
+                            <p>Panel de control para gestión empresarial</p>
+                        </div>
+                        <div class="portfolio-item">
+                            <h4>App Móvil Web</h4>
+                            <p>Aplicación PWA para gestión de tareas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Tarifas</h3>
+                    <p><strong>Por hora:</strong> $500 MXN</p>
+                    <p><strong>Proyecto completo:</strong> Desde $15,000 MXN</p>
+                </div>
+
+                <button class="btn btn-primary" style="width: 100%; margin-top: 2rem;" onclick="showPage('proposal')">
+                    Enviar Propuesta de Trabajo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Proposal Page -->
+    <div id="proposal-page" class="page">
+        <div class="container fade-in">
+            <div class="proposal-form">
+                <h2>Enviar Propuesta de Trabajo</h2>
+                
+                <div class="form-section">
+                    <h3>Información del Proyecto</h3>
+                    <div class="form-group">
+                        <label for="project-title">Título del Proyecto</label>
+                        <input type="text" id="project-title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="project-description">Descripción del Proyecto</label>
+                        <textarea id="project-description" placeholder="Describe detalladamente lo que necesitas..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="budget">Presupuesto Estimado (MXN)</label>
+                        <input type="number" id="budget" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="timeline">Tiempo Estimado</label>
+                        <input type="text" id="timeline" placeholder="Ej: 2 semanas, 1 mes...">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Información de Contacto</h3>
+                    <div class="form-group">
+                        <label for="contact-email">Tu Email</label>
+                        <input type="email" id="contact-email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contact-phone">Teléfono (Opcional)</label>
+                        <input type="tel" id="contact-phone">
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button class="btn btn-secondary" onclick="showPage('profile-detail')">Cancelar</button>
+                    <button class="btn btn-primary" onclick="submitProposal()">Enviar Propuesta</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Profile Page -->
+    <div id="my-profile-page" class="page">
+        <div class="container fade-in">
+            <h2>Mi Perfil</h2>
+            
+            <div class="form-section">
+                <h3>Información Personal</h3>
+                <div class="form-group">
+                    <label for="name">Nombre Completo</label>
+                    <input type="text" id="name" value="Tu Nombre">
+                </div>
+                
+                <div class="form-group">
+                    <label for="professional-id">Cédula Profesional (Opcional)</label>
+                    <input type="text" id="professional-id">
+                </div>
+
+                <div class="form-group">
+                    <label for="bio">Biografía</label>
+                    <textarea id="bio" placeholder="Cuéntanos sobre ti y tu experiencia..."></textarea>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Habilidades</h3>
+                <div class="form-group">
+                    <label for="skills">Tus Habilidades (separadas por comas)</label>
+                    <input type="text" id="skills" placeholder="React, JavaScript, CSS, PHP...">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Tarifas</h3>
+                <div class="form-group">
+                    <label for="hourly-rate">Tarifa por Hora (MXN)</label>
+                    <input type="number" id="hourly-rate">
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="saveProfile()">Guardar Cambios</button>
+        </div>
+    </div>
+
+    <!-- Payment Page -->
+    <div id="payment-page" class="page">
+        <div class="container fade-in">
+            <div class="payment-container">
+                <h2>Procesar Pago</h2>
+                
+                <div class="payment-amount">$15,000 MXN</div>
+                
+                <p>Proyecto: Desarrollo de E-commerce</p>
+                <p>Freelancer: Ana García</p>
+                
+                <div class="wallet-connection">
+                    <h3>Conectar con Interledger Wallet</h3>
+                    <p>Conecta tu billetera para realizar el pago de forma segura</p>
+                    
+                    <div class="form-group">
+                        <label for="wallet-address">Dirección de Wallet</label>
+                        <input type="text" id="wallet-address" placeholder="$wallet.example.com/user">
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="connectWallet()">
+                        Conectar Wallet
+                    </button>
+                </div>
+                
+                <div style="margin-top: 2rem;">
+                    <button class="btn btn-secondary" onclick="showPage('proposal')">Cancelar</button>
+                    <button class="btn btn-primary" onclick="processPayment()">
+                        Procesar Pago
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Estado global de la aplicación
+        let currentUser = 'client'; // 'client' o 'freelancer'
+        let currentPage = 'login-page';
+
+        // Funciones de navegación
+        function showPage(pageId) {
+            // Ocultar todas las páginas
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Mostrar la página seleccionada
+            const page = document.getElementById(pageId + '-page') || document.getElementById(pageId);
+            if (page) {
+                page.classList.add('active');
+                currentPage = pageId;
+            }
+        }
+
+        // Funciones de autenticación
+        function selectUserType(type) {
+            currentUser = type;
+            document.querySelectorAll('.user-type').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function login() {
+            // Simular login exitoso
+            showPage('dashboard');
+        }
+
+        function logout() {
+            showPage('login');
+        }
+
+        function toggleUserType() {
+            currentUser = currentUser === 'client' ? 'freelancer' : 'client';
+            alert(`Cambiado a modo: ${currentUser === 'client' ? 'Cliente' : 'Freelancer'}`);
+        }
+
+        // Funciones de búsqueda
+        function searchProfiles() {
+            const searchTerm = document.querySelector('.search-box input').value;
+            if (searchTerm.trim()) {
+                showPage('profiles');
+                // Aquí iría la lógica de filtrado
+                alert(`Buscando: ${searchTerm}`);
+            }
+        }
+
+        // Funciones de perfil
+        function showProfileDetail(profileId) {
+            showPage('profile-detail');
+            // Aquí cargarías los datos específicos del perfil
+        }
+
+        // Funciones de propuestas
+        function submitProposal() {
+            const title = document.getElementById('project-title').value;
+            const budget = document.getElementById('budget').value;
+            
+            if (title && budget) {
+                alert('¡Propuesta enviada exitosamente!');
+                showPage('payment');
+            } else {
+                alert('Por favor completa todos los campos requeridos');
+            }
+        }
+
+        // Funciones de perfil personal
+        function saveProfile() {
+            alert('Perfil guardado exitosamente');
+        }
+
+        // Funciones de pago
+        function connectWallet() {
+            const walletAddress = document.getElementById('wallet-address').value;
+            if (walletAddress) {
+                alert('Wallet conectada exitosamente');
+            } else {
+                alert('Por favor ingresa la dirección de tu wallet');
+            }
+        }
+
+        function processPayment() {
+            alert('Pago procesado exitosamente. El freelancer ha sido notificado.');
+            showPage('dashboard');
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Manejar el formulario de login
+            document.getElementById('login-form').
